@@ -113,7 +113,7 @@ bad_bot = SendOrReactResponse(
     OrTrigger(
         LiteralsTrigger(["bad bot", "stupid bot"], contains=True, case_sensitive=False),
         AndTrigger(
-            LiteralsTrigger(["shut", "bad", "stupid"], contains=True, case_sensitive=False),
+            LiteralsTrigger(["shut", "bad", "stupid", "kys"], contains=True, case_sensitive=False),
             OrTrigger(
                 MentionsTrigger(587652588019908629),
                 LastAuthorTrigger(587652588019908629),
