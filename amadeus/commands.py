@@ -23,6 +23,7 @@ def add_commands(tree: app_commands.CommandTree):
     tree.add_command(ResponseGroup())
     tree.add_command(would_you_rather)
     tree.add_command(rate)
+    tree.add_command(ConversionGroup())
 
 
 async def send_error(interaction: discord.Interaction, error: str):
@@ -254,6 +255,26 @@ async def rate(interaction: discord.Interaction, something: str):
     )
 
 
+
+class ConversionGroup(app_commands.Group):
+    def __init__(self):
+        super().__init__(name='convert', description="Converts between different units")
+
+    @staticmethod
+    def format_float(f: float):
+        return f if int(f) != f else int(f) 
+
+    @app_commands.command(name="ctof", description="Converts celsius to farehnheit")
+    @app_commands.describe(temperature="The temperature, in celsius.")
+    async def ctof(self, interaction: discord.Interaction, temperature: float):
+        new_temperature = round(temperature * 9/5 + 32, 2)
+        await interaction.response.send_message(f"{self.format_float(temperature)}°C is {self.format_float(new_temperature)}°F")
+    
+    @app_commands.command(name="ftoc", description="Converts farenheit to celsius")
+    @app_commands.describe(temperature="The temperature, in farenheit.")
+    async def ftoc(self, interaction: discord.Interaction, temperature: float):
+        new_temperature = round((temperature - 32) * 5/9, 2)
+        await interaction.response.send_message(f"{self.format_float(temperature)}°F is {self.format_float(new_temperature)}°C")
 
 
 
