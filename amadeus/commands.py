@@ -102,7 +102,7 @@ class ResponseGroup(app_commands.Group):
                           description="Sets a specified response's status, or all responses status to specified.")
     @app_commands.describe(response_name="The response to set, or \"all\" for all responses.")
     @app_commands.describe(state="The state to set the response to.")
-    @app_commands.autocomplete(response_name=autocomplete_response, state=autocomplete_state)
+    @app_commands.autocomplete(response_name=autocomplete_response) #TODO: see if there's a way to do this 
     @commands.is_owner()
     @commands.has_permissions(administrator=True)
     async def response_set(self, interaction: discord.Interaction, response_name: str, state: str):
@@ -117,6 +117,7 @@ class ResponseGroup(app_commands.Group):
                 resp.set_state(state)
             except ValueError as e:
                 await send_error(interaction, str(e))
+                return
 
             interaction.client.save_state()
             await send_success(interaction, f"Succesfully set response {response_name} to state {state}")

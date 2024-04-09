@@ -1,6 +1,7 @@
 from .actions import *
 from .triggers import *
 
+import random
 
 class Response:
     """
@@ -45,12 +46,13 @@ class Response:
         This is unused in the base Response, but can be used in subclasses to allow for on the fly customization.
         :return: The state of this response
         """
+        # TODO: make this a NotImplmentedException and add the proper handling to the command
         return "N/A"
 
     def set_state(self, state):
         """
         Sets the current state of this Response.
-        Returns the current state of this Response.
+        Returns the current state of this Remodsponse.
         This is unused in the base Response, but can be used in subclasses to allow for on the fly customization.
         :param state: The state to set this Response to.
         :return: Nothing
@@ -102,3 +104,43 @@ class SendOrReactResponse(Response):
             raise ValueError(f"State can only be either \"message\" or \"react\".")
 
         self.state = state
+
+class RandomChanceResponse(Response):
+    """
+    A response that has a random chance to apply it's action when triggered.
+    The chance of the randomness is configurable on the fly.
+    """
+
+    def __init__(self, trigger: Trigger, action: Action, name, default=0.5):
+        super().__init__(trigger, action, name)
+
+        self.chance = default
+
+
+    def get_state(self):
+        return str(self.chance)
+
+    def set_state(self, state):
+
+        try:
+            new_chance = float(state)
+        except ValueError:
+            raise ValueError(f"{state} is not a valid state for this response. It has to be a floating point number.")
+
+        if new_chance < 0 or new_chance > 1:
+            raise ValueError(f"{new_chance} is not a valid probability. It needs to be inbetween 0 and 1 (inclusive).")
+
+        self.chance = new_chance
+
+    async def apply(self, msg, bot):        
+
+        """
+        Applies the associated action.
+        :param msg: The message that this is being sent to
+        :param bot: The client to be run on.
+        :return: Nothing
+        """
+
+        if random.random() < self.chance:
+            await super().apply(msg, bot)
+

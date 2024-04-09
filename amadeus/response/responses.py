@@ -141,7 +141,7 @@ cool_bot = SendOrReactResponse(
     "Cool Bot"
 )
 
-dad_bot = Response(
+dad_bot = RandomChanceResponse(
     RegexTrigger(r"^.*( |^)i['‘ʼ’]?m (.+)"),
     RegexSendAction(r"^.*( |^)i['‘ʼ’]?m (.+)", r"Hi \2, I'm dad!"),
     "Dad Bot"

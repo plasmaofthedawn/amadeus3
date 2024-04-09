@@ -127,3 +127,4 @@ class SendRandomActionEmbedAction(Action):
         )
 
         await msg.channel.send(embed=self.embed_generator(out))
+
