@@ -20,10 +20,10 @@ def add_commands(tree: app_commands.CommandTree):
     """
     tree.add_command(click)
     tree.add_command(ping)
-    tree.add_command(ResponseGroup())
+    tree.add_command(response_group)
     tree.add_command(would_you_rather)
     tree.add_command(rate)
-    tree.add_command(ConversionGroup())
+    tree.add_command(conversion_group)
 
 
 async def send_error(interaction: discord.Interaction, error: str):
@@ -82,12 +82,19 @@ async def autocomplete_boolean(interaction: discord.Interaction, current: str) -
     ]
 
 
+def is_me():
+    def predicate(interaction: discord.Interaction) -> bool:
+        return interaction.user.id == 234387706463911939
+    return app_commands.check(predicate)
+
 # TODO: Make this per server
+@commands.is_owner()
 class ResponseGroup(app_commands.Group):
     def __init__(self):
         super().__init__(name='responses', description="Get and modify responses")
 
     @app_commands.command(name="get", description="Shows all responses and their status")
+    @is_me()
     async def get_responses(self, interaction: discord.Interaction):
         table = []
 
@@ -103,8 +110,7 @@ class ResponseGroup(app_commands.Group):
     @app_commands.describe(response_name="The response to set, or \"all\" for all responses.")
     @app_commands.describe(state="The state to set the response to.")
     @app_commands.autocomplete(response_name=autocomplete_response) #TODO: see if there's a way to do this 
-    @commands.is_owner()
-    @commands.has_permissions(administrator=True)
+    @is_me()
     async def response_set(self, interaction: discord.Interaction, response_name: str, state: str):
         if response_name.lower() != "all":
             resp = response.get_response_by_name(response_name)
@@ -132,8 +138,7 @@ class ResponseGroup(app_commands.Group):
                           description="Enables a specified response, or enables all responses.")
     @app_commands.describe(response_name="The response to enable, or \"all\" for all responses.")
     @app_commands.autocomplete(response_name=autocomplete_response)
-    @commands.is_owner()
-    @commands.has_permissions(administrator=True)
+    @is_me()
     async def response_enable(self, interaction: discord.Interaction, response_name: str):
         if response_name.lower() != "all":
             r = response.get_response_by_name(response_name)
@@ -155,8 +160,7 @@ class ResponseGroup(app_commands.Group):
                           description="Disables a specified response, or disables all responses.")
     @app_commands.describe(response_name="The response to disable, or \"all\" for all responses.")
     @app_commands.autocomplete(response_name=autocomplete_response)
-    @commands.is_owner()
-    @commands.has_permissions(administrator=True)
+    @is_me()
     async def response_disable(self, interaction: discord.Interaction, response_name: str):
         if response_name.lower() != "all":
             r = response.get_response_by_name(response_name)
@@ -173,6 +177,13 @@ class ResponseGroup(app_commands.Group):
             response.set_all_enabled(defaultdict(lambda: False))
             interaction.client.save_state()
             await send_success(interaction, f"Disabled all responses")
+
+response_group = ResponseGroup()
+
+@response_group.error
+async def on_response_group_error(interaction: discord.Interaction, error):
+    await send_error(interaction, "Hey, only the owner of this bot can use this command!")
+
 
 
 #TODO: is this needed? channel permissions are good enough right
@@ -277,7 +288,5 @@ class ConversionGroup(app_commands.Group):
         new_temperature = round((temperature - 32) * 5/9, 2)
         await interaction.response.send_message(f"{self.format_float(temperature)}°F is {self.format_float(new_temperature)}°C")
 
-
-
-
+conversion_group = ConversionGroup()
 

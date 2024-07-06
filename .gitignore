@@ -2,3 +2,4 @@
 /data.pickle
 *.pyc
 *.pyo
+__pycache__
