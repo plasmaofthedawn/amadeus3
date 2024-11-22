@@ -1,9 +1,11 @@
-import random
-
 import discord
 
 
-def default_embed(title: str, msg: str, color=0x521414):
+DEFAULT_COLOR = 0x521414
+ERROR_COLOR = 0xab0306
+SUCCESS_COLOR = 0x079100
+
+def default_embed(title: str, msg: str, color=DEFAULT_COLOR):
     """
     Creates a mostly empty embed.
     This function will mostly be used by other embed generators.
@@ -28,7 +30,7 @@ def error_embed(error: str):
     :param error: The error string.
     :return: The embed.
     """
-    return default_embed("Error", error, color=0xab0306)
+    return default_embed("Error", error, color=ERROR_COLOR)
 
 
 def success_embed(message: str):
@@ -37,7 +39,7 @@ def success_embed(message: str):
     :param message: The success message.
     :return: The embed.
     """
-    return default_embed("Success", message, color=0x079100)
+    return default_embed("Success", message, color=SUCCESS_COLOR)
 
 
 def boldifier(x: str):
@@ -48,3 +50,18 @@ def action_embed(text):
     return default_embed(
         "", text
     )
+
+def dc_embed(output: str, command: str, stdin: str | None, color=DEFAULT_COLOR):
+
+    embed = discord.Embed()
+
+    embed.title = "dc"
+    embed.description = "```" + output + "```"
+    embed.color = color
+
+    embed.add_field(name="command", value="`"+command+"`", inline=True)
+
+    if stdin:
+        embed.add_field(name="stdin", value="`"+stdin, inline=True)
+
+    return embed

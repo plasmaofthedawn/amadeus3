@@ -1,7 +1,10 @@
 import hashlib
 from collections import defaultdict
 from datetime import datetime, timezone
-from typing import List
+from typing import List, Optional
+import subprocess
+import re
+import tempfile
 
 import discord
 from discord import app_commands
@@ -24,6 +27,7 @@ def add_commands(tree: app_commands.CommandTree):
     tree.add_command(would_you_rather)
     tree.add_command(rate)
     tree.add_command(conversion_group)
+    tree.add_command(dc)
 
 
 async def send_error(interaction: discord.Interaction, error: str):
@@ -265,6 +269,42 @@ async def rate(interaction: discord.Interaction, something: str):
     await interaction.response.send_message(
         embed=embeds.default_embed("", f"{intro} {comment} {rating_method}")
     )
+
+@app_commands.command(name="dc", description="Runs a program in dc")
+@app_commands.describe(program="The program to be run", stdin="(Optional) stdin for the program")
+async def dc(interaction: discord.Interaction, program: str, stdin: Optional[str]):
+
+    DC_ENCODING = "ascii"
+    DC_REGEX = r"![^><]"
+
+    if re.search(DC_REGEX, program):
+        await interaction.response.send_message(
+            embed=embeds.dc_embed("dc program contains an invalid command (!)", program, None, embeds.ERROR_COLOR)
+        )
+        return
+
+    with tempfile.NamedTemporaryFile() as fp:
+
+        fp.write(program.encode(DC_ENCODING))
+        fp.seek(0)
+
+        try:
+
+            if stdin:
+                p = subprocess.run(["dc", "-f", fp.name], input=stdin.encode(DC_ENCODING), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=5)
+            else: 
+                p = subprocess.run(["dc", "-f", fp.name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=2)
+
+
+            await interaction.response.send_message(
+                embed=embeds.dc_embed(str(p.stdout, encoding=DC_ENCODING), program, stdin)
+            )
+
+        except subprocess.TimeoutExpired:
+            await interaction.response.send_message(
+                embed=embeds.dc_embed("dc timeout reached (2s)", program, None, embeds.ERROR_COLOR)
+            )
+
 
 
 

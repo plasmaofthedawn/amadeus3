@@ -76,7 +76,7 @@ class Amadeus(discord.Client):
             "click_db": self.click_db
         }
 
-        with open("data.pickle", "wb") as f:
+        with open(pickle_name, "wb") as f:
             p = pickle.Pickler(f)
 
             p.dump(save)
