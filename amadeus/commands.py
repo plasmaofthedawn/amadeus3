@@ -285,7 +285,7 @@ async def dc(interaction: discord.Interaction, program: str, stdin: Optional[str
 
     if stdin and "!" in stdin:
         await interaction.response.send_message(
-            embed=embeds.dc_embed("dc stdin contains an invalid character (!)", program, stdin, embeds.ERROR_COLOR)
+            embed=embeds.dc_embed("stdin contains an invalid character (!)", program, stdin, embeds.ERROR_COLOR)
         )
         return
 
