@@ -62,6 +62,6 @@ def dc_embed(output: str, command: str, stdin: str | None, color=DEFAULT_COLOR):
     embed.add_field(name="command", value="`"+command+"`", inline=True)
 
     if stdin:
-        embed.add_field(name="stdin", value="`"+stdin, inline=True)
+        embed.add_field(name="stdin", value="`"+stdin+"`", inline=True)
 
     return embed
