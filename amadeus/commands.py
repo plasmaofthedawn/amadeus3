@@ -275,7 +275,7 @@ async def rate(interaction: discord.Interaction, something: str):
 async def dc(interaction: discord.Interaction, program: str, stdin: Optional[str]):
 
     DC_ENCODING = "ascii"
-    DC_REGEX = r"![^><]"
+    DC_REGEX = r"![^><=]"
 
     if re.search(DC_REGEX, program):
         await interaction.response.send_message(
