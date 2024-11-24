@@ -15,6 +15,41 @@ class Trigger:
 
         raise NotImplemented
 
+class ChannelCooldownTrigger(Trigger):
+    """
+    A trigger that will call it's nested trigger after it's check has been called a certain number of times within the channel. 
+    The cooldown will start after the 
+    """
+
+    def __init__(self, needed: int, trigger: Trigger) -> None:
+        self.needed = needed
+        self.cooldowns = {}
+        self.trigger = trigger
+
+    async def check(self, msg: discord.Message) -> bool:
+        
+        # if cooldown and it's not over
+        if msg.channel in self.cooldowns and self.cooldowns[msg.channel] > 0:
+            self.cooldowns[msg.channel] -= 1
+            return False
+        # else if it's over
+        else:
+
+            if await self.trigger.check(msg):
+                # then start cooldown
+                self.cooldowns[msg.channel] = self.needed
+                return True
+            
+            # remove extraneous zeros
+            elif msg.channel in self.cooldowns:
+                del self.cooldowns[msg.channel]
+
+            return False
+
+
+
+
+
 
 class LiteralsTrigger(Trigger):
     """

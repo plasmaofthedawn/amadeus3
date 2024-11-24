@@ -186,4 +186,11 @@ pat = Response(
     ".pat"
 )
 
-responses = [thanks_bot, bad_bot, cool_bot, dad_bot, nicu, nullpo, amadeus, cyanide, hug, pat]
+meow = RandomChanceResponse(
+    ChannelCooldownTrigger(5, RegexTrigger(r"m[re]+o+w+~*")),
+    EvaluateStringAction(lambda x: x.content),
+    "meow"
+)
+
+
+responses = [thanks_bot, bad_bot, cool_bot, dad_bot, nicu, nullpo, amadeus, cyanide, hug, pat, meow]

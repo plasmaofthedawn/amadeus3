@@ -80,6 +80,23 @@ class RandomLiteralAction(Action):
         await msg.channel.send(random.choice(literals))
 
 
+class EvaluateStringAction(Action):
+    """
+    An action that will return a string based on a given input function being passed in a function
+    """
+
+    def __init__(self, func: Callable[[discord.Message], str]):
+        """
+        Creates a new EvaluateStringAction
+        :param func: the function to be run when triggered
+        """
+        self.func = func
+
+    async def apply(self, msg: discord.Message, bot: discord.Client):
+        s = self.func(msg)
+        await msg.channel.send(s)
+
+
 class ReactAction(Action):
     """
     An action that reacts to the message with an emoji.
