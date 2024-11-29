@@ -27,7 +27,6 @@ class ChannelCooldownTrigger(Trigger):
         self.trigger = trigger
 
     async def check(self, msg: discord.Message) -> bool:
-        
         # if cooldown and it's not over
         if msg.channel in self.cooldowns and self.cooldowns[msg.channel] > 0:
             self.cooldowns[msg.channel] -= 1

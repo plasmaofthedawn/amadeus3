@@ -5,6 +5,8 @@ from .actions import *
 from .triggers import *
 
 
+BOT_ID = 587652588019908629
+
 HUG_POSSIBILITIES = [
     "heheehehehe {0} hugs {1} < 3 < 3 <  ##<#,3,33<#3,#3,,3,3,#<...",
     "{0} squeezes {1} tightly.",
@@ -99,8 +101,8 @@ thanks_bot = SendOrReactResponse(
         AndTrigger(
             LiteralsTrigger(["thank"], contains=True, case_sensitive=False),
             OrTrigger(
-                MentionsTrigger(587652588019908629),
-                LastAuthorTrigger(587652588019908629),
+                MentionsTrigger(BOT_ID),
+                LastAuthorTrigger(BOT_ID),
                 LiteralsTrigger(["amadeus"], contains=True, case_sensitive=False)
             )
         )
@@ -115,8 +117,8 @@ bad_bot = SendOrReactResponse(
         AndTrigger(
             LiteralsTrigger(["shut", "bad", "stupid", "kys"], contains=True, case_sensitive=False),
             OrTrigger(
-                MentionsTrigger(587652588019908629),
-                LastAuthorTrigger(587652588019908629),
+                MentionsTrigger(BOT_ID),
+                LastAuthorTrigger(BOT_ID),
                 LiteralsTrigger(["amadeus"], contains=True, case_sensitive=False)
             )
         )
@@ -131,8 +133,8 @@ cool_bot = SendOrReactResponse(
         AndTrigger(
             LiteralsTrigger(["epic", "cool", "poggers"], contains=True, case_sensitive=False),
             OrTrigger(
-                MentionsTrigger(587652588019908629),
-                LastAuthorTrigger(587652588019908629),
+                MentionsTrigger(BOT_ID),
+                LastAuthorTrigger(BOT_ID),
                 LiteralsTrigger(["amadeus"], contains=True, case_sensitive=False)
             )
         )
@@ -162,9 +164,9 @@ nullpo = Response(
 amadeus = Response(
     OrTrigger(
         RegexTrigger(r"^amadeus*"),
-        MentionsTrigger(587652588019908629)
+        MentionsTrigger(BOT_ID)
     ),
-    RandomLiteralAction(["uwu", "?", "hey", "waddup", lambda x: x.author.nick or x.author.name]),
+    RandomLiteralAction(["uwu", "?", "hey", "waddup", lambda x: x.author.display_name]),
     "Amadeus"
 )
 
@@ -188,7 +190,7 @@ pat = Response(
 
 meow = RandomChanceResponse(
     ChannelCooldownTrigger(5, RegexTrigger(r"m[re]+o+w+~*")),
-    EvaluateStringAction(lambda x: x.content),
+    RegexSendAction(r"^.*(m[re]+o+w+~*).*$", r"\1"),
     "meow"
 )
 

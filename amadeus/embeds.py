@@ -56,7 +56,7 @@ def dc_embed(output: str, command: str, stdin: str | None, color=DEFAULT_COLOR):
     embed = discord.Embed()
 
     embed.title = "dc"
-    embed.description = "```" + output + "```"
+    embed.description = ("```" + output + "```") if output else "stdout was empty"
     embed.color = color
 
     embed.add_field(name="command", value="`"+command+"`", inline=True)
